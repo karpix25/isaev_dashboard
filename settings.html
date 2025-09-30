@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Настройки Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>⚙️ Настройки</h1>
+
+  <form id="settingsForm">
+    <label>
+      System Prompt:
+      <textarea id="system_prompt"></textarea>
+    </label>
+    <label>
+      Модель:
+      <select id="model">
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+        <option value="gpt-4.1">gpt-4.1</option>
+        <option value="claude-3.5-sonnet">claude-3.5-sonnet</option>
+      </select>
+    </label>
+    <label>
+      Buffer (секунды):
+      <input type="number" id="buffer_seconds" />
+    </label>
+    <label>
+      Context Limit:
+      <input type="number" id="context_limit" />
+    </label>
+    <label>
+      Followup Delay (мин):
+      <input type="number" id="followup_delay_minutes" />
+    </label>
+    <label>
+      Followup Message:
+      <input type="text" id="followup_message" />
+    </label>
+    <button type="submit">💾 Сохранить</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("settingsForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        system_prompt: document.getElementById("system_prompt").value,
+        model: document.getElementById("model").value,
+        buffer_seconds: Number(document.getElementById("buffer_seconds").value),
+        context_limit: Number(document.getElementById("context_limit").value),
+        followup_delay_minutes: Number(document.getElementById("followup_delay_minutes").value),
+        followup_message: document.getElementById("followup_message").value,
+      };
+
+      // отправляем на твой n8n webhook
+      await fetch("https://n8n.karpix.com/webhook/update-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      alert("✅ Настройки сохранены!");
+    });
+  </script>
+</body>
+</html>
