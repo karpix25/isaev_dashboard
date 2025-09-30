@@ -1,8 +1,18 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready();
+async function sendAuthData() {
+  const tg = window.Telegram.WebApp;
 
-console.log("User:", tg.initDataUnsafe.user);
+  // Берём initData целиком (оно содержит user + подпись hash)
+  const initData = tg.initData;
 
-document.getElementById("user").textContent =
-  JSON.stringify(tg.initDataUnsafe.user, null, 2);
+  // Шлём в n8n
+  const res = await fetch("https://n8n.karpix.com/webhook/telegram-auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ initData })
+  });
+
+  const data = await res.json();
+  console.log("Ответ от n8n:", data);
+}
+
+sendAuthData();
